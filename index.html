@@ -1,162 +1,170 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Calendario Taller 1er Año - Editable</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario Taller 1° Año - Editable</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-    header { text-align: center; margin-bottom: 30px; }
-    h1 { color: #e67e22; }
-    .mes { margin-bottom: 50px; page-break-inside: avoid; }
-    .mes h2 { color: #e67e22; text-align: center; }
-    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.9em; }
-    th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; height: 100px; text-align: left; }
-    th { background: #27ae60; color: white; }
-    [contenteditable="true"]:focus { outline: 2px solid #3498db; background: #fffef0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 20px;
+      background: #f8f8f8;
+      color: #333;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #d35400;
+    }
+    .controls {
+      margin: 20px 0;
+      text-align: center;
+    }
+    select, button {
+      font-size: 1.1em;
+      padding: 8px 16px;
+      margin: 0 10px;
+    }
+    .container {
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+    .meses {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      gap: 30px;
+    }
+    .mes {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .mes h2 {
+      text-align: center;
+      color: #d35400;
+      margin: 0 0 10px;
+    }
+    .mini-cal {
+      font-size: 0.85em;
+      text-align: center;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9em;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+      vertical-align: top;
+      height: 80px;
+    }
+    th {
+      background: #27ae60;
+      color: white;
+      text-align: center;
+      font-size: 0.85em;
+    }
+    td[contenteditable="true"] {
+      cursor: text;
+      min-height: 70px;
+    }
+    td[contenteditable="true"]:focus {
+      outline: 2px solid #3498db;
+      background: #f0f8ff;
+    }
 
-    /* Colores de tu calendario 2025 */
-    .ajuste, .teoria { background: #f39c12; color: white; }
-    .practica, .corte, .limado { background: #d35400; color: white; }
-    .pia, .emi { background: #9b59b6; color: white; }
-    .apoyo { background: #3498db; color: white; }
-    .receso { background: #27ae60; color: white; font-weight: bold; }
-    .feriado { background: #e74c3c; color: white; font-weight: bold; }
-    .examen { background: #c0392b; color: white; }
+    /* Colores de tu calendario original */
+    .feriado     { background: #e74c3c; color: white; font-weight: bold; }
+    .ajuste      { background: #f39c12; color: white; }
+    .teoria      { background: #f1c40f; color: black; }
+    .practica    { background: #d35400; color: white; }
+    .pia         { background: #9b59b6; color: white; }
+    .apoyo       { background: #3498db; color: white; }
+    .receso      { background: #27ae60; color: white; }
+    .examen      { background: #c0392b; color: white; }
+    .carpinteria { background: #8e44ad; color: white; }
+    .hojalateria { background: #e67e22; color: white; }
+
+    /* Zoom controls */
+    .zoom-container { transform-origin: top left; }
+    @media (max-width: 800px) { .meses { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Planificación Taller 1er Año - <span id="anioTitulo">2026</span></h1>
-    <p>Editable • Cambia el año en el código JS y recarga</p>
+
+<header>
+  <h1>Planificación Taller 1er Año</h1>
+  <div class="controls">
+    <label>Año: 
+      <select id="selectAnio">
+        <option value="2025">2025</option>
+        <option value="2026" selected>2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+      </select>
+    </label>
+    <button onclick="zoomIn()">Zoom +</button>
+    <button onclick="zoomOut()">Zoom -</button>
     <button onclick="guardarLocal()">Guardar local</button>
-    <button onclick="descargar()">Descargar HTML editado</button>
-  </header>
+    <button onclick="descargar()">Descargar HTML</button>
+  </div>
+</header>
 
-  <main id="calendario"></main>
+<div class="container">
+  <div class="meses" id="mesesContainer"></div>
+</div>
 
-  <script>
-    // === CONFIGURACIÓN FÁCIL DE CAMBIAR PARA OTRO AÑO ===
-    const config = {
-      anio: 2026,                       // Cambia a 2027 aquí
-      inicioClases: new Date(2026, 2-1, 2),  // mes-1 porque JS usa 0-11 (2 de marzo 2026)
-      finClases: new Date(2026, 12-1, 18),   // 18 dic
-      recesoInicio: new Date(2026, 7-1, 20),
-      recesoFin: new Date(2026, 7-1, 31),
-      feriados: [  // Agrega/actualiza fechas para el año (Date objects)
-        { fecha: new Date(2026, 2-1, 16), label: 'Carnaval' },
-        { fecha: new Date(2026, 2-1, 17), label: 'Carnaval' },
-        { fecha: new Date(2026, 3-1, 24), label: 'Memoria' },
-        { fecha: new Date(2026, 4-1, 2), label: 'Malvinas' },
-        { fecha: new Date(2026, 4-1, 3), label: 'Viernes Santo' },
-        { fecha: new Date(2026, 5-1, 1), label: 'Trabajador' },
-        { fecha: new Date(2026, 5-1, 25), label: 'Revolución Mayo' },
-        { fecha: new Date(2026, 6-1, 15), label: 'Güemes' },
-        { fecha: new Date(2026, 7-1, 9), label: 'Independencia' },
-        { fecha: new Date(2026, 8-1, 17), label: 'San Martín' },
-        { fecha: new Date(2026, 10-1, 12), label: 'Diversidad Cultural' },
-        { fecha: new Date(2026, 11-1, 20), label: 'Soberanía' },
-        { fecha: new Date(2026, 12-1, 8), label: 'Inmaculada' },
-        { fecha: new Date(2026, 12-1, 25), label: 'Navidad' },
-        // Agrega puentes turísticos cuando se confirmen
-      ]
-    };
+<script>
+// Configuración base - puedes expandir feriados por año
+const feriadosBase = {
+  "2025": [
+    {d:1,m:1, txt:"Año Nuevo"},
+    {d:24,m:3, txt:"Memoria"},
+    {d:2,m:4, txt:"Malvinas"},
+    {d:3,m:4, txt:"Viernes Santo"},
+    {d:1,m:5, txt:"Trabajador"},
+    {d:25,m:5, txt:"Revolución Mayo"},
+    {d:16,m:2, txt:"Carnaval"}, {d:17,m:2, txt:"Carnaval"},
+    // ... agregar más según tu PDF
+  ],
+  "2026": [
+    {d:2,m:3, txt:"Inicio clases secundaria"},
+    {d:16,m:2, txt:"Carnaval"}, {d:17,m:2, txt:"Carnaval"},
+    {d:24,m:3, txt:"Memoria"},
+    {d:2,m:4, txt:"Malvinas"},
+    {d:3,m:4, txt:"Viernes Santo"},
+    {d:1,m:5, txt:"Trabajador"},
+    {d:25,m:5, txt:"Revolución Mayo"},
+    {d:20,m:7, txt:"Inicio receso"}, {d:31,m:7, txt:"Fin receso"},
+    // completar con agenda CABA cuando la tengas
+  ]
+  // agregar 2027, 2028...
+};
 
-    // Contenidos pedagógicos (secuencia aproximada de tu 2025, con "semana relativa" desde inicio)
-    const bloques = [
-      { tipo: 'apoyo', texto: 'Periodo de Apoyo y Acompañamiento', duracionDias: 10, desdeSemana: -2 }, // pre-inicio
-      { tipo: 'ajuste', texto: '-Ajuste- Teoría y Metrología', duracionDias: 4, desdeSemana: 1 },
-      { tipo: 'practica', texto: 'Corte Pieza Teoría y Metrología', duracionDias: 5, desdeSemana: 3 },
-      { tipo: 'practica', texto: 'Limado C1-C2 Teoría y Metrología', duracionDias: 8, desdeSemana: 4 },
-      { tipo: 'practica', texto: 'Limado C3-C6 Llevar a medida / Lijado N100', duracionDias: 12, desdeSemana: 6 },
-      { tipo: 'practica', texto: '-Hojalatería- Teoría/Práctica + Trazo / Plegado / Remachado', duracionDias: 15, desdeSemana: 9 },
-      { tipo: 'teoria', texto: 'Teoría 1-2 Conexionado / Dibujo / Práctica C.E.', duracionDias: 20, desdeSemana: 12 },
-      { tipo: 'pia', texto: 'PIA / EMI', duracionDias: 5, desdeSemana: 18 }, // aprox pre-invierno
-      { tipo: 'receso', texto: 'Receso Escolar', duracionDias: 999, desdeSemana: 20 }, // placeholder
-      { tipo: 'carpinteria', texto: '-Carpintería- Corte / Escofina / Formón / Patas / Ensamble', duracionDias: 25, desdeSemana: 22 },
-      { tipo: 'pia', texto: 'PIA Final / Proyecto Final', duracionDias: 10, desdeSemana: 35 },
-      // Agrega más bloques según necesites
-    ];
+let zoomLevel = 1;
 
-    // Funciones helper
-    function esDiaLaborable(fecha) {
-      const dia = fecha.getDay();
-      return dia !== 0 && dia !== 6; // no dom ni sáb
-    }
+function zoomIn()  { zoomLevel += 0.15; applyZoom(); }
+function zoomOut() { zoomLevel = Math.max(0.6, zoomLevel - 0.15); applyZoom(); }
+function applyZoom() {
+  document.querySelector('.zoom-container').style.transform = `scale(${zoomLevel})`;
+}
 
-    function esFeriado(fecha) {
-      return config.feriados.some(f => f.fecha.toDateString() === fecha.toDateString());
-    }
+function generarCalendario(anio) {
+  const container = document.getElementById('mesesContainer');
+  container.innerHTML = '';
+  container.className = 'zoom-container';
 
-    function generarMes(mes, anio) { // mes 0-11
-      const primerDia = new Date(anio, mes, 1);
-      const ultimoDia = new Date(anio, mes + 1, 0);
-      const diasMes = ultimoDia.getDate();
-      let diaSemanaInicio = primerDia.getDay(); // 0=dom
+  const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  const diasSemana = ["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
 
-      let html = `<section class="mes"><h2>${primerDia.toLocaleString('es-AR', {month: 'long', year: 'numeric'})}</h2><table><thead><tr>
-        <th>Dom</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th></tr></thead><tbody>`;
-
-      let dia = 1 - diaSemanaInicio;
-      for (let semana = 0; semana < 6; semana++) {
-        html += '<tr>';
-        for (let col = 0; col < 7; col++) {
-          if (dia >= 1 && dia <= diasMes) {
-            const fecha = new Date(anio, mes, dia);
-            let clase = '';
-            let contenido = dia.toString();
-
-            if (!esDiaLaborable(fecha)) clase = 'feriado'; // fin de semana gris o rojo claro
-            if (esFeriado(fecha)) {
-              clase = 'feriado';
-              contenido += '<br>' + (config.feriados.find(f => f.fecha.toDateString() === fecha.toDateString())?.label || '');
-            }
-            if (fecha.getTime() === config.inicioClases.getTime()) contenido += '<br>Inicio clases';
-            if (fecha >= config.recesoInicio && fecha <= config.recesoFin) clase += ' receso';
-            if (fecha.getTime() === config.finClases.getTime()) contenido += '<br>Fin clases';
-
-            html += `<td class="${clase}" contenteditable="true">${contenido}</td>`;
-          } else {
-            html += '<td></td>';
-          }
-          dia++;
-        }
-        html += '</tr>';
-        if (dia > diasMes) break;
-      }
-      html += '</tbody></table></section>';
-      return html;
-    }
-
-    // Generar todos los meses
-    function renderCalendario() {
-      document.getElementById('anioTitulo').textContent = config.anio;
-      let html = '';
-      for (let m = 0; m < 12; m++) {
-        html += generarMes(m, config.anio);
-      }
-      document.getElementById('calendario').innerHTML = html;
-
-      // Aquí podrías agregar lógica para colocar bloques pedagógicos automáticamente
-      // Por ahora, deja celdas vacías para que edites manualmente
-    }
-
-    renderCalendario();
-
-    // Guardar / Descargar
-    function guardarLocal() {
-      localStorage.setItem('calHTML', document.body.innerHTML);
-      alert('Guardado localmente');
-    }
-
-    function descargar() {
-      const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `calendario-taller-${config.anio}.html`;
-      a.click();
-    }
-  </script>
-</body>
-</html>
+  for (let m = 0; m < 12; m++) {
+    const divMes = document.createElement('div');
+    divMes
