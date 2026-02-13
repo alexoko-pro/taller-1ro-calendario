@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendario Taller 1er Año - Editable</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    header { text-align: center; margin-bottom: 30px; }
+    h1 { color: #e67e22; }
+    .mes { margin-bottom: 50px; page-break-inside: avoid; }
+    .mes h2 { color: #e67e22; text-align: center; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.9em; }
+    th, td { border: 1px solid #ccc; padding: 8px; vertical-align: top; height: 100px; text-align: left; }
+    th { background: #27ae60; color: white; }
+    [contenteditable="true"]:focus { outline: 2px solid #3498db; background: #fffef0; }
+
+    /* Colores de tu calendario 2025 */
+    .ajuste, .teoria { background: #f39c12; color: white; }
+    .practica, .corte, .limado { background: #d35400; color: white; }
+    .pia, .emi { background: #9b59b6; color: white; }
+    .apoyo { background: #3498db; color: white; }
+    .receso { background: #27ae60; color: white; font-weight: bold; }
+    .feriado { background: #e74c3c; color: white; font-weight: bold; }
+    .examen { background: #c0392b; color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Planificación Taller 1er Año - <span id="anioTitulo">2026</span></h1>
+    <p>Editable • Cambia el año en el código JS y recarga</p>
+    <button onclick="guardarLocal()">Guardar local</button>
+    <button onclick="descargar()">Descargar HTML editado</button>
+  </header>
+
+  <main id="calendario"></main>
+
+  <script>
+    // === CONFIGURACIÓN FÁCIL DE CAMBIAR PARA OTRO AÑO ===
+    const config = {
+      anio: 2026,                       // Cambia a 2027 aquí
+      inicioClases: new Date(2026, 2-1, 2),  // mes-1 porque JS usa 0-11 (2 de marzo 2026)
+      finClases: new Date(2026, 12-1, 18),   // 18 dic
+      recesoInicio: new Date(2026, 7-1, 20),
+      recesoFin: new Date(2026, 7-1, 31),
+      feriados: [  // Agrega/actualiza fechas para el año (Date objects)
+        { fecha: new Date(2026, 2-1, 16), label: 'Carnaval' },
+        { fecha: new Date(2026, 2-1, 17), label: 'Carnaval' },
+        { fecha: new Date(2026, 3-1, 24), label: 'Memoria' },
+        { fecha: new Date(2026, 4-1, 2), label: 'Malvinas' },
+        { fecha: new Date(2026, 4-1, 3), label: 'Viernes Santo' },
+        { fecha: new Date(2026, 5-1, 1), label: 'Trabajador' },
+        { fecha: new Date(2026, 5-1, 25), label: 'Revolución Mayo' },
+        { fecha: new Date(2026, 6-1, 15), label: 'Güemes' },
+        { fecha: new Date(2026, 7-1, 9), label: 'Independencia' },
+        { fecha: new Date(2026, 8-1, 17), label: 'San Martín' },
+        { fecha: new Date(2026, 10-1, 12), label: 'Diversidad Cultural' },
+        { fecha: new Date(2026, 11-1, 20), label: 'Soberanía' },
+        { fecha: new Date(2026, 12-1, 8), label: 'Inmaculada' },
+        { fecha: new Date(2026, 12-1, 25), label: 'Navidad' },
+        // Agrega puentes turísticos cuando se confirmen
+      ]
+    };
+
+    // Contenidos pedagógicos (secuencia aproximada de tu 2025, con "semana relativa" desde inicio)
+    const bloques = [
+      { tipo: 'apoyo', texto: 'Periodo de Apoyo y Acompañamiento', duracionDias: 10, desdeSemana: -2 }, // pre-inicio
+      { tipo: 'ajuste', texto: '-Ajuste- Teoría y Metrología', duracionDias: 4, desdeSemana: 1 },
+      { tipo: 'practica', texto: 'Corte Pieza Teoría y Metrología', duracionDias: 5, desdeSemana: 3 },
+      { tipo: 'practica', texto: 'Limado C1-C2 Teoría y Metrología', duracionDias: 8, desdeSemana: 4 },
+      { tipo: 'practica', texto: 'Limado C3-C6 Llevar a medida / Lijado N100', duracionDias: 12, desdeSemana: 6 },
+      { tipo: 'practica', texto: '-Hojalatería- Teoría/Práctica + Trazo / Plegado / Remachado', duracionDias: 15, desdeSemana: 9 },
+      { tipo: 'teoria', texto: 'Teoría 1-2 Conexionado / Dibujo / Práctica C.E.', duracionDias: 20, desdeSemana: 12 },
+      { tipo: 'pia', texto: 'PIA / EMI', duracionDias: 5, desdeSemana: 18 }, // aprox pre-invierno
+      { tipo: 'receso', texto: 'Receso Escolar', duracionDias: 999, desdeSemana: 20 }, // placeholder
+      { tipo: 'carpinteria', texto: '-Carpintería- Corte / Escofina / Formón / Patas / Ensamble', duracionDias: 25, desdeSemana: 22 },
+      { tipo: 'pia', texto: 'PIA Final / Proyecto Final', duracionDias: 10, desdeSemana: 35 },
+      // Agrega más bloques según necesites
+    ];
+
+    // Funciones helper
+    function esDiaLaborable(fecha) {
+      const dia = fecha.getDay();
+      return dia !== 0 && dia !== 6; // no dom ni sáb
+    }
+
+    function esFeriado(fecha) {
+      return config.feriados.some(f => f.fecha.toDateString() === fecha.toDateString());
+    }
+
+    function generarMes(mes, anio) { // mes 0-11
+      const primerDia = new Date(anio, mes, 1);
+      const ultimoDia = new Date(anio, mes + 1, 0);
+      const diasMes = ultimoDia.getDate();
+      let diaSemanaInicio = primerDia.getDay(); // 0=dom
+
+      let html = `<section class="mes"><h2>${primerDia.toLocaleString('es-AR', {month: 'long', year: 'numeric'})}</h2><table><thead><tr>
+        <th>Dom</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th></tr></thead><tbody>`;
+
+      let dia = 1 - diaSemanaInicio;
+      for (let semana = 0; semana < 6; semana++) {
+        html += '<tr>';
+        for (let col = 0; col < 7; col++) {
+          if (dia >= 1 && dia <= diasMes) {
+            const fecha = new Date(anio, mes, dia);
+            let clase = '';
+            let contenido = dia.toString();
+
+            if (!esDiaLaborable(fecha)) clase = 'feriado'; // fin de semana gris o rojo claro
+            if (esFeriado(fecha)) {
+              clase = 'feriado';
+              contenido += '<br>' + (config.feriados.find(f => f.fecha.toDateString() === fecha.toDateString())?.label || '');
+            }
+            if (fecha.getTime() === config.inicioClases.getTime()) contenido += '<br>Inicio clases';
+            if (fecha >= config.recesoInicio && fecha <= config.recesoFin) clase += ' receso';
+            if (fecha.getTime() === config.finClases.getTime()) contenido += '<br>Fin clases';
+
+            html += `<td class="${clase}" contenteditable="true">${contenido}</td>`;
+          } else {
+            html += '<td></td>';
+          }
+          dia++;
+        }
+        html += '</tr>';
+        if (dia > diasMes) break;
+      }
+      html += '</tbody></table></section>';
+      return html;
+    }
+
+    // Generar todos los meses
+    function renderCalendario() {
+      document.getElementById('anioTitulo').textContent = config.anio;
+      let html = '';
+      for (let m = 0; m < 12; m++) {
+        html += generarMes(m, config.anio);
+      }
+      document.getElementById('calendario').innerHTML = html;
+
+      // Aquí podrías agregar lógica para colocar bloques pedagógicos automáticamente
+      // Por ahora, deja celdas vacías para que edites manualmente
+    }
+
+    renderCalendario();
+
+    // Guardar / Descargar
+    function guardarLocal() {
+      localStorage.setItem('calHTML', document.body.innerHTML);
+      alert('Guardado localmente');
+    }
+
+    function descargar() {
+      const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `calendario-taller-${config.anio}.html`;
+      a.click();
+    }
+  </script>
+</body>
+</html>
