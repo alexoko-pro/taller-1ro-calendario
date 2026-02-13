@@ -3,99 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calendario Taller 1° Año - Editable</title>
+  <title>Planificación Taller 1er Año - Editable</title>
   <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 20px;
-      background: #f8f8f8;
-      color: #333;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    h1 {
-      color: #d35400;
-    }
-    .controls {
-      margin: 20px 0;
-      text-align: center;
-    }
-    select, button {
-      font-size: 1.1em;
-      padding: 8px 16px;
-      margin: 0 10px;
-    }
-    .container {
-      max-width: 1800px;
-      margin: 0 auto;
-    }
-    .meses {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
-      gap: 30px;
-    }
-    .mes {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .mes h2 {
-      text-align: center;
-      color: #d35400;
-      margin: 0 0 10px;
-    }
-    .mini-cal {
-      font-size: 0.85em;
-      text-align: center;
-      margin-bottom: 8px;
-      color: #555;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9em;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
-      text-align: left;
-      vertical-align: top;
-      height: 80px;
-    }
-    th {
-      background: #27ae60;
-      color: white;
-      text-align: center;
-      font-size: 0.85em;
-    }
-    td[contenteditable="true"] {
-      cursor: text;
-      min-height: 70px;
-    }
-    td[contenteditable="true"]:focus {
-      outline: 2px solid #3498db;
-      background: #f0f8ff;
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f8f8; }
+    header { text-align: center; margin-bottom: 30px; }
+    h1 { color: #d35400; }
+    .controls { margin: 20px 0; text-align: center; }
+    select, button { font-size: 1.1em; padding: 8px 16px; margin: 5px; }
+    .container { max-width: 2400px; margin: 0 auto; }
+    .meses { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 30px; }
+    .mes { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .mes h2 { text-align: center; color: #d35400; margin-bottom: 10px; }
+    .mini-cal { font-size: 0.9em; text-align: center; margin-bottom: 10px; color: #444; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+    th, td { border: 1px solid #bbb; padding: 6px; vertical-align: top; height: 90px; text-align: left; }
+    th { background: #27ae60; color: white; text-align: center; font-weight: bold; }
+    td[contenteditable="true"] { cursor: text; min-height: 80px; }
+    td[contenteditable="true"]:focus { outline: 2px solid #3498db; background: #f0f8ff; }
 
-    /* Colores de tu calendario original */
-    .feriado     { background: #e74c3c; color: white; font-weight: bold; }
-    .ajuste      { background: #f39c12; color: white; }
-    .teoria      { background: #f1c40f; color: black; }
-    .practica    { background: #d35400; color: white; }
-    .pia         { background: #9b59b6; color: white; }
-    .apoyo       { background: #3498db; color: white; }
-    .receso      { background: #27ae60; color: white; }
-    .examen      { background: #c0392b; color: white; }
-    .carpinteria { background: #8e44ad; color: white; }
+    /* Colores fieles a tu PDF */
+    .feriado { background: #e74c3c; color: white; font-weight: bold; }
+    .ajuste { background: #f39c12; color: white; }
+    .teoria { background: #f1c40f; color: black; }
+    .practica { background: #d35400; color: white; }
+    .pia { background: #9b59b6; color: white; }
+    .emi { background: #8e44ad; color: white; }
+    .apoyo { background: #3498db; color: white; }
+    .receso { background: #27ae60; color: white; font-weight: bold; }
     .hojalateria { background: #e67e22; color: white; }
+    .carpinteria { background: #8e44ad; color: white; }
 
-    /* Zoom controls */
-    .zoom-container { transform-origin: top left; }
-    @media (max-width: 800px) { .meses { grid-template-columns: 1fr; } }
+    .zoom-container { transform-origin: top left; transition: transform 0.3s; }
   </style>
 </head>
 <body>
@@ -104,67 +42,154 @@
   <h1>Planificación Taller 1er Año</h1>
   <div class="controls">
     <label>Año: 
-      <select id="selectAnio">
+      <select id="anioSelect">
         <option value="2025">2025</option>
         <option value="2026" selected>2026</option>
         <option value="2027">2027</option>
-        <option value="2028">2028</option>
       </select>
     </label>
     <button onclick="zoomIn()">Zoom +</button>
     <button onclick="zoomOut()">Zoom -</button>
     <button onclick="guardarLocal()">Guardar local</button>
-    <button onclick="descargar()">Descargar HTML</button>
+    <button onclick="descargarHTML()">Descargar HTML</button>
   </div>
 </header>
 
-<div class="container">
-  <div class="meses" id="mesesContainer"></div>
+<div class="zoom-container" id="zoomContainer">
+  <div class="container">
+    <div class="meses" id="meses"></div>
+  </div>
 </div>
 
 <script>
-// Configuración base - puedes expandir feriados por año
-const feriadosBase = {
-  "2025": [
-    {d:1,m:1, txt:"Año Nuevo"},
-    {d:24,m:3, txt:"Memoria"},
-    {d:2,m:4, txt:"Malvinas"},
-    {d:3,m:4, txt:"Viernes Santo"},
-    {d:1,m:5, txt:"Trabajador"},
-    {d:25,m:5, txt:"Revolución Mayo"},
-    {d:16,m:2, txt:"Carnaval"}, {d:17,m:2, txt:"Carnaval"},
-    // ... agregar más según tu PDF
-  ],
-  "2026": [
-    {d:2,m:3, txt:"Inicio clases secundaria"},
-    {d:16,m:2, txt:"Carnaval"}, {d:17,m:2, txt:"Carnaval"},
-    {d:24,m:3, txt:"Memoria"},
-    {d:2,m:4, txt:"Malvinas"},
-    {d:3,m:4, txt:"Viernes Santo"},
-    {d:1,m:5, txt:"Trabajador"},
-    {d:25,m:5, txt:"Revolución Mayo"},
-    {d:20,m:7, txt:"Inicio receso"}, {d:31,m:7, txt:"Fin receso"},
-    // completar con agenda CABA cuando la tengas
-  ]
-  // agregar 2027, 2028...
-};
+let zoom = 1;
+const zoomContainer = document.getElementById('zoomContainer');
+const mesesDiv = document.getElementById('meses');
 
-let zoomLevel = 1;
-
-function zoomIn()  { zoomLevel += 0.15; applyZoom(); }
-function zoomOut() { zoomLevel = Math.max(0.6, zoomLevel - 0.15); applyZoom(); }
-function applyZoom() {
-  document.querySelector('.zoom-container').style.transform = `scale(${zoomLevel})`;
-}
+function zoomIn() { zoom += 0.15; zoomContainer.style.transform = `scale(${zoom})`; }
+function zoomOut() { zoom = Math.max(0.5, zoom - 0.15); zoomContainer.style.transform = `scale(${zoom})`; }
 
 function generarCalendario(anio) {
-  const container = document.getElementById('mesesContainer');
-  container.innerHTML = '';
-  container.className = 'zoom-container';
+  mesesDiv.innerHTML = '';
+  const mesesNombres = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
-  const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-  const diasSemana = ["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
+  // Feriados básicos (expándelo con tu PDF)
+  const feriados = feriadosBase[anio] || [];
 
   for (let m = 0; m < 12; m++) {
-    const divMes = document.createElement('div');
-    divMes
+    const mesDiv = document.createElement('div');
+    mesDiv.className = 'mes';
+
+    mesDiv.innerHTML = `<h2>${mesesNombres[m]} ${anio}</h2>
+      <div class="mini-cal">Mini-calendario ${mesesNombres[m]} ${anio}</div>`;
+
+    const table = document.createElement('table');
+    table.innerHTML = `<thead><tr>
+      <th>DOMINGO</th><th>LUNES</th><th>MARTES</th><th>MIÉRCOLES</th><th>JUEVES</th><th>VIERNES</th><th>SÁBADO</th>
+    </tr></thead><tbody></tbody>`;
+
+    const tbody = table.querySelector('tbody');
+
+    // Ejemplo: Marzo 2026 adaptado de tu PDF (ajusta rowspan y textos)
+    if (mesesNombres[m] === "Marzo") {
+      tbody.innerHTML = `
+        <tr>
+          <td></td>
+          <td class="inicio" contenteditable="true">2<br>Inicio clases secundaria<br>Presentación / Normas</td>
+          <td class="ajuste" rowspan="2" contenteditable="true">3-4<br>-Ajuste-<br>Teoría y Metrología</td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+          <td contenteditable="true"></td>
+        </tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr>
+          <td class="apoyo" colspan="7" rowspan="2" contenteditable="true">Periodo de Apoyo y Acompañamiento</td>
+        </tr>
+        <tr></tr>
+        <tr>
+          <td></td>
+          <td class="practica" contenteditable="true">9<br>Corte Pieza<br>Teoría y Metrología</td>
+          <td class="practica" rowspan="2" contenteditable="true">10-11<br>Corte Pieza<br>Limado C1</td>
+          <td contenteditable="true"></td>
+          <td class="practica" contenteditable="true">12<br>Limado C1</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr>
+          <td></td>
+          <td class="feriado" contenteditable="true">24<br>Día Memoria</td>
+          <td class="practica" contenteditable="true">25<br>Limado C2<br>Verif. perp.</td>
+          <td colspan="4" contenteditable="true"></td>
+        </tr>
+      `;
+    } else if (mesesNombres[m] === "Julio") {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="receso" contenteditable="true">20 al 31 julio - Receso Escolar</td>
+        </tr>
+        <tr>
+          <td colspan="7" class="pia" contenteditable="true">PIA / EMI (semanas previas al receso)</td>
+        </tr>
+      `;
+    } else {
+      // Meses vacíos por ahora
+      for (let i = 0; i < 6; i++) {
+        const tr = document.createElement('tr');
+        for (let j = 0; j < 7; j++) tr.innerHTML += '<td contenteditable="true"></td>';
+        tbody.appendChild(tr);
+      }
+    }
+
+    // Paleta de colores por celda
+    const tds = tbody.querySelectorAll('td[contenteditable="true"]');
+    tds.forEach(td => {
+      const sel = document.createElement('select');
+      sel.style.fontSize = '0.8em';
+      sel.innerHTML = `
+        <option value="">Color</option>
+        <option value="ajuste">Ajuste</option>
+        <option value="practica">Práctica</option>
+        <option value="pia">PIA</option>
+        <option value="apoyo">Apoyo</option>
+        <option value="receso">Receso</option>
+        <option value="feriado">Feriado</option>
+        <option value="teoria">Teoría</option>
+      `;
+      sel.onchange = () => td.className = sel.value;
+      td.appendChild(sel);
+    });
+
+    mesDiv.appendChild(table);
+    mesesDiv.appendChild(mesDiv);
+  }
+}
+
+// Cambio de año
+document.getElementById('anioSelect').addEventListener('change', e => {
+  generarCalendario(e.target.value);
+});
+
+// Inicial
+generarCalendario(2026);
+
+// Guardar / Descargar
+function guardarLocal() {
+  localStorage.setItem('calendarioHTML', document.body.innerHTML);
+  alert('Guardado en localStorage (persiste en este navegador)');
+}
+
+function descargarHTML() {
+  const html = document.documentElement.outerHTML;
+  const blob = new Blob([html], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `planificacion-taller-${document.getElementById('anioSelect').value}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
