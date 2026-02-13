@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planificación Taller 1er Año - Editable</title>
+  <title>Planificación Taller 1er Año - 2026 (Editable)</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f8f8; }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; color: #222; }
     header { text-align: center; margin-bottom: 30px; }
     h1 { color: #d35400; }
     .controls { margin: 20px 0; text-align: center; }
-    select, button { font-size: 1.1em; padding: 8px 16px; margin: 5px; }
+    select, button { font-size: 1.1em; padding: 8px 12px; margin: 5px; cursor: pointer; }
     .container { max-width: 2400px; margin: 0 auto; }
-    .meses { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 30px; }
-    .mes { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .mes h2 { text-align: center; color: #d35400; margin-bottom: 10px; }
-    .mini-cal { font-size: 0.9em; text-align: center; margin-bottom: 10px; color: #444; }
+    .meses { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 40px; }
+    .mes { background: white; border: 1px solid #ccc; border-radius: 8px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .mes h2 { text-align: center; color: #d35400; margin: 0 0 10px; }
+    .mini-cal { font-size: 0.9em; text-align: center; margin-bottom: 12px; color: #555; }
     table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-    th, td { border: 1px solid #bbb; padding: 6px; vertical-align: top; height: 90px; text-align: left; }
-    th { background: #27ae60; color: white; text-align: center; font-weight: bold; }
-    td[contenteditable="true"] { cursor: text; min-height: 80px; }
+    th, td { border: 1px solid #aaa; padding: 5px; vertical-align: top; text-align: left; height: 90px; }
+    th { background: #27ae60; color: white; text-align: center; font-weight: bold; font-size: 0.8em; }
+    td[contenteditable="true"] { cursor: text; }
     td[contenteditable="true"]:focus { outline: 2px solid #3498db; background: #f0f8ff; }
 
-    /* Colores fieles a tu PDF */
+    /* Colores de tu PDF */
     .feriado { background: #e74c3c; color: white; font-weight: bold; }
     .ajuste { background: #f39c12; color: white; }
     .teoria { background: #f1c40f; color: black; }
@@ -42,7 +42,7 @@
   <h1>Planificación Taller 1er Año</h1>
   <div class="controls">
     <label>Año: 
-      <select id="anioSelect">
+      <select id="anio">
         <option value="2025">2025</option>
         <option value="2026" selected>2026</option>
         <option value="2027">2027</option>
@@ -51,145 +51,28 @@
     <button onclick="zoomIn()">Zoom +</button>
     <button onclick="zoomOut()">Zoom -</button>
     <button onclick="guardarLocal()">Guardar local</button>
-    <button onclick="descargarHTML()">Descargar HTML</button>
+    <button onclick="descargar()">Descargar HTML editado</button>
   </div>
 </header>
 
-<div class="zoom-container" id="zoomContainer">
+<div class="zoom-container" id="zoom">
   <div class="container">
     <div class="meses" id="meses"></div>
   </div>
 </div>
 
 <script>
-let zoom = 1;
-const zoomContainer = document.getElementById('zoomContainer');
-const mesesDiv = document.getElementById('meses');
+let zoomLevel = 1;
+const zoomEl = document.getElementById('zoom');
+const mesesEl = document.getElementById('meses');
 
-function zoomIn() { zoom += 0.15; zoomContainer.style.transform = `scale(${zoom})`; }
-function zoomOut() { zoom = Math.max(0.5, zoom - 0.15); zoomContainer.style.transform = `scale(${zoom})`; }
+function zoomIn() { zoomLevel += 0.2; zoomEl.style.transform = `scale(${zoomLevel})`; }
+function zoomOut() { zoomLevel = Math.max(0.6, zoomLevel - 0.2); zoomEl.style.transform = `scale(${zoomLevel})`; }
 
-function generarCalendario(anio) {
-  mesesDiv.innerHTML = '';
-  const mesesNombres = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+function generarMes(mesNum, anio) {
+  const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  const diasSem = ["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
 
-  // Feriados básicos (expándelo con tu PDF)
-  const feriados = feriadosBase[anio] || [];
-
-  for (let m = 0; m < 12; m++) {
-    const mesDiv = document.createElement('div');
-    mesDiv.className = 'mes';
-
-    mesDiv.innerHTML = `<h2>${mesesNombres[m]} ${anio}</h2>
-      <div class="mini-cal">Mini-calendario ${mesesNombres[m]} ${anio}</div>`;
-
-    const table = document.createElement('table');
-    table.innerHTML = `<thead><tr>
-      <th>DOMINGO</th><th>LUNES</th><th>MARTES</th><th>MIÉRCOLES</th><th>JUEVES</th><th>VIERNES</th><th>SÁBADO</th>
-    </tr></thead><tbody></tbody>`;
-
-    const tbody = table.querySelector('tbody');
-
-    // Ejemplo: Marzo 2026 adaptado de tu PDF (ajusta rowspan y textos)
-    if (mesesNombres[m] === "Marzo") {
-      tbody.innerHTML = `
-        <tr>
-          <td></td>
-          <td class="inicio" contenteditable="true">2<br>Inicio clases secundaria<br>Presentación / Normas</td>
-          <td class="ajuste" rowspan="2" contenteditable="true">3-4<br>-Ajuste-<br>Teoría y Metrología</td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-        </tr>
-        <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr>
-          <td class="apoyo" colspan="7" rowspan="2" contenteditable="true">Periodo de Apoyo y Acompañamiento</td>
-        </tr>
-        <tr></tr>
-        <tr>
-          <td></td>
-          <td class="practica" contenteditable="true">9<br>Corte Pieza<br>Teoría y Metrología</td>
-          <td class="practica" rowspan="2" contenteditable="true">10-11<br>Corte Pieza<br>Limado C1</td>
-          <td contenteditable="true"></td>
-          <td class="practica" contenteditable="true">12<br>Limado C1</td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr>
-          <td></td>
-          <td class="feriado" contenteditable="true">24<br>Día Memoria</td>
-          <td class="practica" contenteditable="true">25<br>Limado C2<br>Verif. perp.</td>
-          <td colspan="4" contenteditable="true"></td>
-        </tr>
-      `;
-    } else if (mesesNombres[m] === "Julio") {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="7" class="receso" contenteditable="true">20 al 31 julio - Receso Escolar</td>
-        </tr>
-        <tr>
-          <td colspan="7" class="pia" contenteditable="true">PIA / EMI (semanas previas al receso)</td>
-        </tr>
-      `;
-    } else {
-      // Meses vacíos por ahora
-      for (let i = 0; i < 6; i++) {
-        const tr = document.createElement('tr');
-        for (let j = 0; j < 7; j++) tr.innerHTML += '<td contenteditable="true"></td>';
-        tbody.appendChild(tr);
-      }
-    }
-
-    // Paleta de colores por celda
-    const tds = tbody.querySelectorAll('td[contenteditable="true"]');
-    tds.forEach(td => {
-      const sel = document.createElement('select');
-      sel.style.fontSize = '0.8em';
-      sel.innerHTML = `
-        <option value="">Color</option>
-        <option value="ajuste">Ajuste</option>
-        <option value="practica">Práctica</option>
-        <option value="pia">PIA</option>
-        <option value="apoyo">Apoyo</option>
-        <option value="receso">Receso</option>
-        <option value="feriado">Feriado</option>
-        <option value="teoria">Teoría</option>
-      `;
-      sel.onchange = () => td.className = sel.value;
-      td.appendChild(sel);
-    });
-
-    mesDiv.appendChild(table);
-    mesesDiv.appendChild(mesDiv);
-  }
-}
-
-// Cambio de año
-document.getElementById('anioSelect').addEventListener('change', e => {
-  generarCalendario(e.target.value);
-});
-
-// Inicial
-generarCalendario(2026);
-
-// Guardar / Descargar
-function guardarLocal() {
-  localStorage.setItem('calendarioHTML', document.body.innerHTML);
-  alert('Guardado en localStorage (persiste en este navegador)');
-}
-
-function descargarHTML() {
-  const html = document.documentElement.outerHTML;
-  const blob = new Blob([html], {type: 'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `planificacion-taller-${document.getElementById('anioSelect').value}.html`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-</script>
-</body>
-</html>
+  let html = `<div class="mes">
+    <h2>${meses[mesNum]} ${anio}</h2>
+    <div class="mini-cal">Mini-calendario ${meses[mesNum]} ${
