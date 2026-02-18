@@ -6,11 +6,11 @@
   <title>Planificación Taller 1er Año - Editable</title>
   <style>
     body {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: Arial, sans-serif;
       margin: 15px;
       background: #f9f9f9;
-      color: #222;
       font-size: 13px;
+      line-height: 1.3;
     }
     header {
       text-align: center;
@@ -28,16 +28,14 @@
       font-size: 0.95em;
       padding: 6px 12px;
       margin: 4px;
-      cursor: pointer;
     }
     .container {
       max-width: 100%;
       overflow-x: auto;
-      padding-bottom: 20px;
     }
     .meses {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
       gap: 20px;
     }
     .mes {
@@ -62,25 +60,25 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      table-layout: auto;
-      font-size: 0.8em;
-      line-height: 1.2;
+      table-layout: fixed;
+      font-size: 0.78em;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 4px 6px;
+      padding: 4px 5px;
       text-align: left;
       vertical-align: top;
       min-height: 60px;
       position: relative;
+      word-wrap: break-word;
     }
     th {
       background: #27ae60;
       color: white;
       text-align: center;
       font-weight: bold;
-      padding: 6px 4px;
-      white-space: nowrap;
+      padding: 5px;
+      font-size: 0.75em;
     }
     td[contenteditable="true"] {
       cursor: text;
@@ -94,9 +92,9 @@
       top: 2px;
       right: 2px;
       font-size: 0.65em;
-      padding: 1px 4px;
+      padding: 1px 3px;
       z-index: 5;
-      background: rgba(255,255,255,0.85);
+      background: white;
       border: 1px solid #aaa;
       border-radius: 3px;
     }
@@ -108,6 +106,9 @@
     .pia { background: #9b59b6; color: white; }
     .apoyo { background: #3498db; color: white; }
     .receso { background: #27ae60; color: white; font-weight: bold; }
+    .hojalateria { background: #e67e22; color: white; }
+    .carpinteria { background: #8e44ad; color: white; }
+    .examen { background: #c0392b; color: white; }
 
     .zoom-container {
       transform-origin: top left;
@@ -134,14 +135,14 @@
   </div>
 </header>
 
-<div class="zoom-container" id="zoomContainer" style="transform: scale(0.9);">
+<div class="zoom-container" id="zoomContainer" style="transform: scale(0.85);">
   <div class="container">
     <div class="meses" id="meses"></div>
   </div>
 </div>
 
 <script>
-let zoomLevel = 0.9;
+let zoomLevel = 0.85;
 const zoomContainer = document.getElementById('zoomContainer');
 const mesesEl = document.getElementById('meses');
 
@@ -167,35 +168,14 @@ function generarCalendario(anio) {
 
     const tbody = table.querySelector('tbody');
 
-    // Marzo de ejemplo (tu estructura real)
+    // Marzo - texto repetido por día (sin rowspan)
     if (mesesNombres[m] === "Marzo") {
       tbody.innerHTML = `
-        <tr>
-          <td></td>
-          <td contenteditable="true" class="inicio">2 Inicio clases secundaria Presentación</td>
-          <td contenteditable="true" class="ajuste" rowspan="2">3-4 -Ajuste- Teoría y Metrología</td>
-          <td></td><td></td><td></td><td></td>
-        </tr>
-        <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr>
-          <td contenteditable="true" class="apoyo" colspan="7" rowspan="3">Periodo de Apoyo y Acompañamiento</td>
-        </tr>
-        <tr></tr><tr></tr>
-        <tr>
-          <td></td>
-          <td contenteditable="true" class="practica" rowspan="2">9-10 Corte Pieza Teoría y Metrología</td>
-          <td contenteditable="true" class="practica" rowspan="2">11-12 Corte Pieza Limado C1</td>
-          <td></td><td></td><td></td><td></td>
-        </tr>
-        <tr></tr>
-        <tr>
-          <td></td>
-          <td contenteditable="true" class="feriado">24 Día Memoria</td>
-          <td contenteditable="true" class="practica">25 Limado C1 Teoría y Metrología</td>
-          <td contenteditable="true" class="practica" rowspan="2">26-27 Limado C2 Verif. perp.</td>
-          <td></td><td></td><td></td>
-        </tr>
-        <tr></tr>
+        <tr><td></td><td contenteditable="true" class="inicio">2 Inicio clases secundaria Presentación</td><td contenteditable="true" class="ajuste">3 -Ajuste- Teoría y Metrología</td><td contenteditable="true" class="ajuste">4 -Ajuste- Teoría y Metrología</td><td></td><td></td><td></td></tr>
+        <tr><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td></tr>
+        <tr><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td></tr>
+        <tr><td></td><td contenteditable="true" class="practica">9 Corte Pieza Teoría y Metrología</td><td contenteditable="true" class="practica">10 Corte Pieza Teoría y Metrología</td><td contenteditable="true" class="practica">11 Corte Pieza Limado C1</td><td contenteditable="true" class="practica">12 Corte Pieza Limado C1</td><td></td><td></td></tr>
+        <tr><td></td><td contenteditable="true" class="feriado">24 Día Nacional de la Memoria</td><td contenteditable="true" class="practica">25 Limado C1 Teoría y Metrología</td><td contenteditable="true" class="practica">26 Limado C2 Verif. perp.</td><td contenteditable="true" class="practica">27 Limado C2 Verif. perp.</td><td></td><td></td></tr>
       `;
     } else {
       // Mes genérico
@@ -242,7 +222,7 @@ generarCalendario(2026);
 // Guardar / Descargar
 function guardarLocal() {
   localStorage.setItem('calendario', document.body.innerHTML);
-  alert('Guardado local');
+  alert('Guardado en localStorage');
 }
 
 function descargar() {
