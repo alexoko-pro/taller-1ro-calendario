@@ -3,37 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planificación Taller 1er Año - 2026 (Editable)</title>
+  <title>Planificación Taller 1er Año - Editable 2026</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; color: #222; }
+    body { font-family: Arial, Helvetica, sans-serif; margin: 20px; background: #f9f9f9; }
     header { text-align: center; margin-bottom: 30px; }
     h1 { color: #d35400; }
     .controls { margin: 20px 0; text-align: center; }
-    select, button { font-size: 1.1em; padding: 8px 12px; margin: 5px; cursor: pointer; }
+    select, button { font-size: 1.1em; padding: 8px 16px; margin: 5px; }
     .container { max-width: 2400px; margin: 0 auto; }
-    .meses { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 40px; }
-    .mes { background: white; border: 1px solid #ccc; border-radius: 8px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .mes h2 { text-align: center; color: #d35400; margin: 0 0 10px; }
-    .mini-cal { font-size: 0.9em; text-align: center; margin-bottom: 12px; color: #555; }
+    .meses { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 30px; }
+    .mes { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .mes h2 { text-align: center; color: #d35400; margin-bottom: 10px; }
+    .mini-cal { font-size: 0.9em; text-align: center; margin-bottom: 10px; color: #555; }
     table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-    th, td { border: 1px solid #aaa; padding: 5px; vertical-align: top; text-align: left; height: 90px; }
-    th { background: #27ae60; color: white; text-align: center; font-weight: bold; font-size: 0.8em; }
-    td[contenteditable="true"] { cursor: text; }
+    th, td { border: 1px solid #ccc; padding: 6px; vertical-align: top; height: 90px; text-align: left; }
+    th { background: #27ae60; color: white; text-align: center; font-weight: bold; }
+    td[contenteditable="true"] { cursor: text; position: relative; }
     td[contenteditable="true"]:focus { outline: 2px solid #3498db; background: #f0f8ff; }
 
     /* Colores de tu PDF */
     .feriado { background: #e74c3c; color: white; font-weight: bold; }
     .ajuste { background: #f39c12; color: white; }
-    .teoria { background: #f1c40f; color: black; }
     .practica { background: #d35400; color: white; }
     .pia { background: #9b59b6; color: white; }
-    .emi { background: #8e44ad; color: white; }
     .apoyo { background: #3498db; color: white; }
     .receso { background: #27ae60; color: white; font-weight: bold; }
     .hojalateria { background: #e67e22; color: white; }
     .carpinteria { background: #8e44ad; color: white; }
 
     .zoom-container { transform-origin: top left; transition: transform 0.3s; }
+    select.color-picker { position: absolute; top: 4px; right: 4px; font-size: 0.75em; z-index: 10; }
   </style>
 </head>
 <body>
@@ -42,7 +41,7 @@
   <h1>Planificación Taller 1er Año</h1>
   <div class="controls">
     <label>Año: 
-      <select id="anio">
+      <select id="anioSelect">
         <option value="2025">2025</option>
         <option value="2026" selected>2026</option>
         <option value="2027">2027</option>
@@ -51,28 +50,86 @@
     <button onclick="zoomIn()">Zoom +</button>
     <button onclick="zoomOut()">Zoom -</button>
     <button onclick="guardarLocal()">Guardar local</button>
-    <button onclick="descargar()">Descargar HTML editado</button>
+    <button onclick="descargarHTML()">Descargar HTML</button>
   </div>
 </header>
 
-<div class="zoom-container" id="zoom">
+<div class="zoom-container" id="zoomContainer">
   <div class="container">
-    <div class="meses" id="meses"></div>
+    <div class="meses" id="mesesContainer"></div>
   </div>
 </div>
 
 <script>
 let zoomLevel = 1;
-const zoomEl = document.getElementById('zoom');
-const mesesEl = document.getElementById('meses');
+const zoomContainer = document.getElementById('zoomContainer');
 
-function zoomIn() { zoomLevel += 0.2; zoomEl.style.transform = `scale(${zoomLevel})`; }
-function zoomOut() { zoomLevel = Math.max(0.6, zoomLevel - 0.2); zoomEl.style.transform = `scale(${zoomLevel})`; }
+function zoomIn()  { zoomLevel += 0.2; zoomContainer.style.transform = `scale(${zoomLevel})`; }
+function zoomOut() { zoomLevel = Math.max(0.5, zoomLevel - 0.2); zoomContainer.style.transform = `scale(${zoomLevel})`; }
 
-function generarMes(mesNum, anio) {
+function generarCalendario(anio) {
+  const container = document.getElementById('mesesContainer');
+  container.innerHTML = '';
+
   const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-  const diasSem = ["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
 
-  let html = `<div class="mes">
-    <h2>${meses[mesNum]} ${anio}</h2>
-    <div class="mini-cal">Mini-calendario ${meses[mesNum]} ${
+  for (let m = 0; m < 12; m++) {
+    const mesDiv = document.createElement('div');
+    mesDiv.className = 'mes';
+    mesDiv.innerHTML = `<h2>${meses[m]} ${anio}</h2>
+      <div class="mini-cal">Mini-calendario ${meses[m]} ${anio}</div>`;
+
+    const table = document.createElement('table');
+    table.innerHTML = `<thead><tr>
+      <th>DOMINGO</th><th>LUNES</th><th>MARTES</th><th>MIÉRCOLES</th><th>JUEVES</th><th>VIERNES</th><th>SÁBADO</th>
+    </tr></thead><tbody></tbody>`;
+
+    const tbody = table.querySelector('tbody');
+
+    // Contenido fiel a tu PDF (adaptado para 2026)
+    let filas = '';
+    if (meses[m] === "Marzo") {
+      filas = `
+        <tr>
+          <td></td>
+          <td class="inicio" contenteditable="true">2<br>Inicio clases secundaria<br>Presentación</td>
+          <td class="ajuste" rowspan="2" contenteditable="true">3-4<br>-Ajuste- Teoría y Metrología</td>
+          <td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td>
+        </tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr>
+          <td class="apoyo" colspan="7" rowspan="3" contenteditable="true">Periodo de Apoyo y Acompañamiento</td>
+        </tr>
+        <tr></tr><tr></tr>
+        <tr>
+          <td></td>
+          <td class="practica" rowspan="2" contenteditable="true">9-10<br>Corte Pieza Teoría y Metrología</td>
+          <td class="practica" rowspan="2" contenteditable="true">11-12<br>Corte Pieza Limado C1</td>
+          <td contenteditable="true"></td><td contenteditable="true"></td><td></td><td></td>
+        </tr>
+        <tr></tr><tr></tr>
+        <tr>
+          <td></td>
+          <td class="feriado" contenteditable="true">24<br>Día Memoria</td>
+          <td class="practica" contenteditable="true">25<br>Limado C1 Teoría y Metrología</td>
+          <td class="practica" rowspan="2" contenteditable="true">26-27<br>Limado C2 Verif. perp.</td>
+          <td contenteditable="true"></td><td></td><td></td>
+        </tr>
+        <tr></tr>
+      `;
+    } else if (meses[m] === "Julio") {
+      filas = `
+        <tr>
+          <td colspan="7" class="pia" rowspan="2" contenteditable="true">PIA / EMI (pre-receso)</td>
+        </tr>
+        <tr></tr>
+        <tr>
+          <td colspan="7" class="receso" rowspan="5" contenteditable="true">20 al 31 julio - Receso Escolar</td>
+        </tr>
+        <tr></tr><tr></tr><tr></tr><tr></tr>
+      `;
+    } else {
+      // Mes genérico con 6 semanas vacías (puedes llenar después)
+      for (let i = 0; i < 6; i++) {
+        filas += '<tr>';
+        for (let j = 0; j < 7; j++) filas += '<td contenteditable
