@@ -3,34 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planificación Taller 1er Año - 2026</title>
+  <title>Planificación Taller 1er Año - Prueba Estática</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-    header { text-align: center; margin-bottom: 30px; }
-    h1 { color: #d35400; }
-    .mes { margin-bottom: 40px; page-break-inside: avoid; }
-    .mes h2 { text-align: center; color: #d35400; margin-bottom: 10px; }
-    .mini-cal { font-size: 0.9em; text-align: center; margin-bottom: 10px; color: #555; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85em; table-layout: fixed; }
-    th, td { border: 1px solid #ccc; padding: 6px; vertical-align: top; text-align: left; height: 90px; }
-    th { background: #27ae60; color: white; text-align: center; font-weight: bold; }
-    .feriado { background: #e74c3c; color: white; font-weight: bold; }
+    h1 { text-align: center; color: #d35400; }
+    .mes { margin: 30px 0; background: white; border: 1px solid #ddd; padding: 15px; border-radius: 6px; }
+    h2 { text-align: center; color: #d35400; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+    th, td { border: 1px solid #ccc; padding: 6px; vertical-align: top; min-height: 80px; }
+    th { background: #27ae60; color: white; text-align: center; }
     .ajuste { background: #f39c12; color: white; }
     .practica { background: #d35400; color: white; }
-    .pia { background: #9b59b6; color: white; }
     .apoyo { background: #3498db; color: white; }
     .receso { background: #27ae60; color: white; font-weight: bold; }
+    .feriado { background: #e74c3c; color: white; font-weight: bold; }
+    .pia { background: #9b59b6; color: white; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Planificación Taller 1er Año - 2026</h1>
-</header>
+<h1>Planificación Taller 1er Año - Prueba Estática</h1>
+<p>Si ves las dos tablas abajo, el HTML carga bien. El problema era el JS.</p>
 
 <div class="mes">
   <h2>Marzo 2026</h2>
-  <div class="mini-cal">Mini-calendario Marzo 2026</div>
   <table>
     <thead>
       <tr>
@@ -40,8 +36,8 @@
     <tbody>
       <tr>
         <td></td>
-        <td class="inicio">2<br>Inicio clases secundaria<br>Presentación</td>
-        <td class="ajuste" rowspan="2">3-4<br>-Ajuste-<br>Teoría y Metrología</td>
+        <td class="inicio">2 Inicio clases</td>
+        <td class="ajuste" rowspan="2">3-4 -Ajuste- Teoría y Metrología</td>
         <td></td><td></td><td></td><td></td>
       </tr>
       <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -51,16 +47,16 @@
       <tr></tr><tr></tr>
       <tr>
         <td></td>
-        <td class="practica" rowspan="2">9-10<br>Corte Pieza Teoría y Metrología</td>
-        <td class="practica" rowspan="2">11-12<br>Corte Pieza Limado C1</td>
+        <td class="practica" rowspan="2">9-10 Corte Pieza Teoría y Metrología</td>
+        <td class="practica" rowspan="2">11-12 Corte Pieza Limado C1</td>
         <td></td><td></td><td></td><td></td>
       </tr>
       <tr></tr>
       <tr>
         <td></td>
-        <td class="feriado">24<br>Día Nacional de la Memoria</td>
-        <td class="practica">25<br>Limado C1 Teoría y Metrología</td>
-        <td class="practica" rowspan="2">26-27<br>Limado C2 Verif. perp.</td>
+        <td class="feriado">24 Día Memoria</td>
+        <td class="practica">25 Limado C1</td>
+        <td class="practica" rowspan="2">26-27 Limado C2 Verif. perp.</td>
         <td></td><td></td><td></td>
       </tr>
       <tr></tr>
@@ -70,7 +66,6 @@
 
 <div class="mes">
   <h2>Julio 2026</h2>
-  <div class="mini-cal">Mini-calendario Julio 2026</div>
   <table>
     <thead>
       <tr>
@@ -79,7 +74,7 @@
     </thead>
     <tbody>
       <tr>
-        <td colspan="7" class="pia" rowspan="2">PIA / EMI (pre-receso)</td>
+        <td colspan="7" class="pia" rowspan="2">PIA / EMI</td>
       </tr>
       <tr></tr>
       <tr>
