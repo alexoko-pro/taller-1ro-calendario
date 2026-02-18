@@ -2,183 +2,45 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planificación Taller 1er Año - Editable</title>
+  <title>Prueba Simple Taller</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
     header { text-align: center; margin-bottom: 30px; }
     h1 { color: #d35400; }
-    .controls { margin: 20px 0; text-align: center; }
-    select, button { font-size: 1.1em; padding: 8px 16px; margin: 5px; cursor: pointer; }
-    .container { max-width: 2400px; margin: 0 auto; }
-    .meses { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 30px; }
-    .mes { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .mes h2 { text-align: center; color: #d35400; margin-bottom: 10px; }
-    .mini-cal { font-size: 0.9em; text-align: center; margin-bottom: 10px; color: #555; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-    th, td { border: 1px solid #ccc; padding: 6px; vertical-align: top; height: 90px; text-align: left; }
-    th { background: #27ae60; color: white; text-align: center; font-weight: bold; }
-    td[contenteditable="true"] { cursor: text; position: relative; min-height: 80px; }
-    td[contenteditable="true"]:focus { outline: 2px solid #3498db; background: #f0f8ff; }
-
-    .feriado { background: #e74c3c; color: white; font-weight: bold; }
-    .ajuste { background: #f39c12; color: white; }
-    .practica { background: #d35400; color: white; }
-    .pia { background: #9b59b6; color: white; }
-    .apoyo { background: #3498db; color: white; }
-    .receso { background: #27ae60; color: white; font-weight: bold; }
-
-    .zoom-container { transform-origin: top left; transition: transform 0.3s; }
-    select.color-picker { position: absolute; top: 4px; right: 4px; font-size: 0.75em; z-index: 10; }
+    .meses { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .mes { background: white; border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+    th { background: #27ae60; color: white; }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Prueba Planificación Taller</h1>
+    <p>Si ves 12 meses abajo, JS funciona. Luego agregamos tu contenido.</p>
+  </header>
 
-<header>
-  <h1>Planificación Taller 1er Año</h1>
-  <div class="controls">
-    <label>Año: 
-      <select id="anioSelect">
-        <option value="2025">2025</option>
-        <option value="2026" selected>2026</option>
-        <option value="2027">2027</option>
-      </select>
-    </label>
-    <button onclick="zoomIn()">Zoom +</button>
-    <button onclick="zoomOut()">Zoom -</button>
-    <button onclick="guardarLocal()">Guardar local</button>
-    <button onclick="descargar()">Descargar HTML</button>
-  </div>
-</header>
+  <div class="meses" id="meses"></div>
 
-<div class="zoom-container" id="zoomContainer">
-  <div class="container">
-    <div class="meses" id="meses"></div>
-  </div>
-</div>
+  <script>
+    const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    const container = document.getElementById('meses');
 
-<script>
-let zoomLevel = 1;
-const zoomContainer = document.getElementById('zoomContainer');
-
-function zoomIn() { zoomLevel += 0.2; zoomContainer.style.transform = `scale(${zoomLevel})`; }
-function zoomOut() { zoomLevel = Math.max(0.5, zoomLevel - 0.2); zoomContainer.style.transform = `scale(${zoomLevel})`; }
-
-function generarCalendario(anio) {
-  const container = document.getElementById('meses');
-  container.innerHTML = '';
-
-  const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-
-  for (let m = 0; m < 12; m++) {
-    const mesDiv = document.createElement('div');
-    mesDiv.className = 'mes';
-    mesDiv.innerHTML = `<h2>${meses[m]} ${anio}</h2>
-      <div class="mini-cal">Mini-calendario ${meses[m]} ${anio}</div>`;
-
-    const table = document.createElement('table');
-    table.innerHTML = `<thead><tr><th>DOM</th><th>LUN</th><th>MAR</th><th>MIE</th><th>JUE</th><th>VIE</th><th>SAB</th></tr></thead><tbody></tbody>`;
-
-    const tbody = table.querySelector('tbody');
-
-    // Contenido de ejemplo (Marzo y Julio con tu estilo)
-    let filas = '';
-    if (meses[m] === "Marzo") {
-      filas = `
-        <tr>
-          <td></td>
-          <td class="inicio" contenteditable="true">2<br>Inicio clases secundaria<br>Presentación</td>
-          <td class="ajuste" rowspan="2" contenteditable="true">3-4<br>-Ajuste-<br>Teoría y Metrología</td>
-          <td></td><td></td><td></td><td></td>
-        </tr>
-        <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-        <tr>
-          <td class="apoyo" colspan="7" rowspan="4" contenteditable="true">Periodo de Apoyo y Acompañamiento</td>
-        </tr>
-        <tr></tr><tr></tr><tr></tr>
-        <tr>
-          <td></td>
-          <td class="practica" rowspan="2" contenteditable="true">9-10<br>Corte Pieza<br>Teoría y Metrología</td>
-          <td class="practica" rowspan="2" contenteditable="true">11-12<br>Corte Pieza<br>Limado C1</td>
-          <td></td><td></td><td></td><td></td>
-        </tr>
-        <tr></tr>
-        <tr>
-          <td></td>
-          <td class="feriado" contenteditable="true">24<br>Día Memoria</td>
-          <td class="practica" contenteditable="true">25<br>Limado C1<br>Teoría y Metrología</td>
-          <td class="practica" rowspan="2" contenteditable="true">26-27<br>Limado C2<br>Verif. perp.</td>
-          <td></td><td></td><td></td>
-        </tr>
-        <tr></tr>
+    for (let m = 0; m < 12; m++) {
+      const div = document.createElement('div');
+      div.className = 'mes';
+      div.innerHTML = `
+        <h2>${meses[m]} 2026</h2>
+        <table>
+          <thead><tr><th>Dom</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+            <tr><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td></tr>
+          </tbody>
+        </table>
       `;
-    } else if (meses[m] === "Julio") {
-      filas = `
-        <tr>
-          <td colspan="7" class="pia" rowspan="2" contenteditable="true">PIA / EMI (pre-receso)</td>
-        </tr>
-        <tr></tr>
-        <tr>
-          <td colspan="7" class="receso" rowspan="6" contenteditable="true">20 al 31 julio - Receso Escolar</td>
-        </tr>
-        <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
-      `;
-    } else {
-      // Meses vacíos con 6 semanas
-      for (let s = 0; s < 6; s++) {
-        filas += '<tr>';
-        for (let d = 0; d < 7; d++) filas += '<td contenteditable="true"></td>';
-        filas += '</tr>';
-      }
+      container.appendChild(div);
     }
-
-    tbody.innerHTML = filas;
-
-    // Selector de color en cada celda editable
-    const tds = tbody.querySelectorAll('td[contenteditable="true"]');
-    tds.forEach(td => {
-      const sel = document.createElement('select');
-      sel.className = 'color-picker';
-      sel.innerHTML = `
-        <option value="">Color</option>
-        <option value="ajuste">Ajuste</option>
-        <option value="practica">Práctica</option>
-        <option value="pia">PIA</option>
-        <option value="apoyo">Apoyo</option>
-        <option value="receso">Receso</option>
-        <option value="feriado">Feriado</option>
-      `;
-      sel.onchange = () => td.className = sel.value;
-      td.appendChild(sel);
-    });
-
-    mesDiv.appendChild(table);
-    container.appendChild(mesDiv);
-  }
-}
-
-// Cambio de año
-document.getElementById('anioSelect').onchange = function() {
-  generarCalendario(this.value);
-};
-
-// Inicial
-generarCalendario(2026);
-
-// Guardar / Descargar
-function guardarLocal() {
-  localStorage.setItem('calendario', document.body.innerHTML);
-  alert('Guardado local');
-}
-
-function descargar() {
-  const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'taller-calendario.html';
-  a.click();
-}
-</script>
+  </script>
 </body>
 </html>
