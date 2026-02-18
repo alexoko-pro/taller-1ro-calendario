@@ -35,9 +35,9 @@
       vertical-align: top; 
       position: relative; 
       word-wrap: break-word; 
-      aspect-ratio: 1 / 1;   /* ← CELDAS CUADRADAS DE BASE */
+      aspect-ratio: 1 / 1;     /* ← CELDAS CUADRADAS SIEMPRE */
       min-height: 80px; 
-      height: auto;          /* ← se expanden con más texto */
+      height: auto;            /* ← se expanden con texto largo */
       overflow: hidden;
     }
     th { 
@@ -144,7 +144,7 @@ function generarCalendario(anio) {
 
     const tbody = table.querySelector('tbody');
 
-    // Marzo (ejemplo completo de tu PDF)
+    // Marzo completo (ejemplo de tu PDF)
     if (mesesNombres[m] === "Marzo") {
       tbody.innerHTML = `
         <tr><td contenteditable="true"></td><td contenteditable="true">2 Inicio clases secundaria Presentación</td><td contenteditable="true" class="ajuste">3 -Ajuste- Teoría y Metrología</td><td contenteditable="true" class="ajuste">4 -Ajuste- Teoría y Metrología</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
@@ -193,7 +193,6 @@ function agregarSelect(td) {
 document.getElementById('anioSelect').onchange = e => generarCalendario(e.target.value);
 generarCalendario(2026);
 
-// Guardar / Descargar
 function guardarLocal() {
   localStorage.setItem('calendario', document.body.innerHTML);
   alert('Guardado en localStorage');
