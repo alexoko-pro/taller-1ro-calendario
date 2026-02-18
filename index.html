@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planificación Taller 1er Año - Editable</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 15px; background: #f9f9f9; font-size: 13px; line-height: 1.3; }
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 15px; 
+      background: #f9f9f9; 
+      font-size: 13px; 
+      line-height: 1.3; 
+    }
     header { text-align: center; margin-bottom: 20px; }
     h1 { color: #d35400; font-size: 1.8em; }
     .controls { margin: 15px 0; text-align: center; }
@@ -15,12 +21,46 @@
     .mes { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
     .mes h2 { text-align: center; color: #d35400; margin: 0 0 6px; font-size: 1.2em; }
     .mini-cal { font-size: 0.8em; text-align: center; margin-bottom: 6px; color: #666; }
-    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 0.78em; }
-    th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; min-height: 80px; position: relative; word-wrap: break-word; }
-    th { background: #27ae60; color: white; text-align: center; font-weight: bold; font-size: 0.75em; }
-    td[contenteditable="true"] { cursor: text; min-height: 80px; height: auto; transition: height 0.2s; }
+
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      table-layout: fixed; 
+      font-size: 0.78em; 
+    }
+    th, td { 
+      border: 1px solid #ccc; 
+      padding: 6px 8px; 
+      text-align: left; 
+      vertical-align: top; 
+      position: relative; 
+      word-wrap: break-word; 
+      aspect-ratio: 1 / 1;   /* ← CELDAS CUADRADAS DE BASE */
+      min-height: 80px; 
+      height: auto;          /* ← se expanden con más texto */
+      overflow: hidden;
+    }
+    th { 
+      background: #27ae60; 
+      color: white; 
+      text-align: center; 
+      font-weight: bold; 
+      font-size: 0.75em; 
+      height: 32px; 
+    }
+    td[contenteditable="true"] { cursor: text; }
     td[contenteditable="true"]:focus { outline: 2px solid #3498db; background: #f0f8ff; }
-    select.color-picker { position: absolute; top: 2px; right: 2px; font-size: 0.65em; padding: 1px 3px; z-index: 5; background: white; border: 1px solid #aaa; border-radius: 3px; }
+    select.color-picker { 
+      position: absolute; 
+      top: 2px; 
+      right: 2px; 
+      font-size: 0.65em; 
+      padding: 1px 3px; 
+      z-index: 5; 
+      background: white; 
+      border: 1px solid #aaa; 
+      border-radius: 3px; 
+    }
 
     .feriado { background: #e74c3c; color: white; font-weight: bold; }
     .ajuste { background: #f39c12; color: white; }
@@ -28,8 +68,6 @@
     .pia { background: #9b59b6; color: white; }
     .apoyo { background: #3498db; color: white; }
     .receso { background: #27ae60; color: white; font-weight: bold; }
-
-    .zoom-container { transform-origin: top left; transition: transform 0.3s; }
   </style>
 </head>
 <body>
@@ -86,7 +124,7 @@ function agregarSelect(td) {
 
 function restaurarSelects() {
   document.querySelectorAll('td[contenteditable="true"]').forEach(td => agregarSelect(td));
-  alert('Menús de color restaurados en todas las celdas');
+  alert('Menús de color restaurados');
 }
 
 function generarCalendario(anio) {
@@ -106,10 +144,10 @@ function generarCalendario(anio) {
 
     const tbody = table.querySelector('tbody');
 
-    // Marzo (tu PDF)
+    // Marzo (ejemplo completo de tu PDF)
     if (mesesNombres[m] === "Marzo") {
       tbody.innerHTML = `
-        <tr><td></td><td contenteditable="true">2 Inicio clases secundaria Presentación</td><td contenteditable="true" class="ajuste">3 -Ajuste- Teoría y Metrología</td><td contenteditable="true" class="ajuste">4 -Ajuste- Teoría y Metrología</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+        <tr><td contenteditable="true"></td><td contenteditable="true">2 Inicio clases secundaria Presentación</td><td contenteditable="true" class="ajuste">3 -Ajuste- Teoría y Metrología</td><td contenteditable="true" class="ajuste">4 -Ajuste- Teoría y Metrología</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
         <tr><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td></tr>
         <tr><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td><td contenteditable="true" class="apoyo">Periodo de Apoyo y Acompañamiento</td></tr>
         <tr><td contenteditable="true"></td><td contenteditable="true" class="practica">9 Corte Pieza Teoría y Metrología</td><td contenteditable="true" class="practica">10 Corte Pieza Teoría y Metrología</td><td contenteditable="true" class="practica">11 Corte Pieza Limado C1</td><td contenteditable="true" class="practica">12 Corte Pieza Limado C1</td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
@@ -123,7 +161,6 @@ function generarCalendario(anio) {
       }
     }
 
-    // Agregar menú de color a cada celda
     const tds = tbody.querySelectorAll('td[contenteditable="true"]');
     tds.forEach(td => {
       agregarSelect(td);
@@ -153,10 +190,7 @@ function agregarSelect(td) {
   }
 }
 
-// Cambio de año
 document.getElementById('anioSelect').onchange = e => generarCalendario(e.target.value);
-
-// Inicial
 generarCalendario(2026);
 
 // Guardar / Descargar
